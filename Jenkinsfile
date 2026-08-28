@@ -2,18 +2,22 @@ pipeline {
     agent any
 
     options {
-        // Empêche deux exécutions concurrentes d'appliquer en même temps
         disableConcurrentBuilds()
         timestamps()
     }
 
     environment {
         TF_IN_AUTOMATION = "true"
-        // Identifiants AWS Academy (temporaires) injectés via Jenkins Credentials,
-        // jamais en dur dans ce fichier.
         AWS_ACCESS_KEY_ID     = credentials('aws-academy-access-key-id')
         AWS_SECRET_ACCESS_KEY = credentials('aws-academy-secret-access-key')
         AWS_SESSION_TOKEN     = credentials('aws-academy-session-token')
+
+        TF_VAR_aws_vpc_id       = credentials('aws-vpc-id')
+        TF_VAR_aws_subnet_ids   = credentials('aws-subnet-ids')
+        TF_VAR_aws_lab_role_arn = credentials('aws-lab-role-arn')
+
+        TF_VAR_ecs_image_tag       = "1.0.0"
+        TF_VAR_k8s_container_image = "web-lucas:1.0.0"
     }
 
     stages {
@@ -41,13 +45,12 @@ pipeline {
 
         stage('Plan (ECS + Kubernetes)') {
             steps {
-                sh 'terraform plan -input=false -out=tfplan -var-file=terraform.tfvars'
+                sh 'terraform plan -input=false -out=tfplan'
             }
         }
 
         stage('Approbation humaine') {
             steps {
-                // Le plan couvre les DEUX cibles : rien n'est appliqué sans validation.
                 input message: 'Appliquer le plan ECS + Kubernetes ?', ok: 'Déployer'
             }
         }
@@ -84,7 +87,6 @@ pipeline {
 
     post {
         always {
-            // Le plan est idempotent : on l'archive pour traçabilité (partie 4.4)
             archiveArtifacts artifacts: 'tfplan', allowEmptyArchive: true
         }
         failure {
