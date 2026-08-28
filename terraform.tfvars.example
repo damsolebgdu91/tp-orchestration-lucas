@@ -1,0 +1,21 @@
+# Copier ce fichier en terraform.tfvars et remplir avec vos valeurs.
+# terraform.tfvars doit être dans .gitignore -- ne JAMAIS le committer.
+
+app_name = "lucas"
+
+# --- ECS ---
+ecs_image_tag     = "1.0.0"
+ecs_desired_count = 2
+
+# Récupérer via la console AWS Academy ou :
+#   aws ec2 describe-vpcs --filters Name=isDefault,Values=true
+aws_vpc_id     = "vpc-xxxxxxxx"
+aws_subnet_ids = ["subnet-aaaaaaaa", "subnet-bbbbbbbb"]
+
+# Récupérer via :
+#   aws iam get-role --role-name LabRole --query 'Role.Arn' --output text
+aws_lab_role_arn = "arn:aws:iam::123456789012:role/LabRole"
+
+# --- Kubernetes ---
+k8s_container_image = "docker.io/monorg/lucas:1.0.0"
+k8s_replicas         = 2

@@ -1,0 +1,16 @@
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+tfplan
+crash.log
+terraform.tfvars
+
+# Secrets / identifiants
+*.pem
+.env
+kubeconfig
+
+# Divers
+.DS_Store
