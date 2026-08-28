@@ -12,8 +12,8 @@ terraform {
 # ---------------------------------------------------------------------------
 resource "aws_ecr_repository" "app" {
   name                 = "web-${var.app_name}"
-  image_tag_mutability = "IMMUTABLE" # empêche l'écrasement silencieux d'un tag
-
+  image_tag_mutability = "IMMUTABLE"
+  force_delete         = true
   image_scanning_configuration {
     scan_on_push = true
   }
